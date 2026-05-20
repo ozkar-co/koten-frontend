@@ -21,10 +21,29 @@ OpenAPI:
 
 ## Ejecutar
 
-Al ser estatico, puedes abrir `index.html` directamente o servir la carpeta con cualquier servidor web simple.
+Con script unificado para local y server (puerto 3006 por defecto):
+
+```bash
+./run.sh
+```
+
+Variables opcionales:
+
+- `PORT` (default: `3006`)
+- `HOST` (default: `0.0.0.0`)
+
+Ejemplo:
+
+```bash
+PORT=3006 HOST=0.0.0.0 ./run.sh
+```
 
 ## Estructura
 
 - `index.html`: layout principal y secciones Lore/Lexicon
 - `styles.css`: estilo minimalista + responsive
-- `app.js`: integracion con API y logica de UI
+- `run.sh`: servidor estatico para local/server
+- `src/main.js`: bootstrap y navegacion
+- `src/service.js`: conexion con backend Koten API
+- `src/views/loreView.js`: vista de Lore
+- `src/views/lexiconView.js`: vista de Lexicon
