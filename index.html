@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Koten Frontend</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menu">Menu</button>
+        <div>
+          <h1>Koten</h1>
+          <p class="subtitle">Frontend minimo para Lore y Lexicon</p>
+        </div>
+      </header>
+
+      <div class="layout">
+        <aside id="sidebar" class="sidebar">
+          <section class="menu-section">
+            <h2>Secciones</h2>
+            <nav class="primary-nav">
+              <button data-view="lore" class="nav-btn active">Lore</button>
+              <button data-view="lexicon" class="nav-btn">Lexicon</button>
+            </nav>
+          </section>
+
+          <section id="lore-menu" class="menu-section">
+            <h3>Lore</h3>
+            <p class="menu-note">Cargando indice...</p>
+            <div class="menu-groups">
+              <div>
+                <h4>Razas</h4>
+                <ul id="race-list"></ul>
+              </div>
+              <div>
+                <h4>Idiomas</h4>
+                <ul id="language-list"></ul>
+              </div>
+            </div>
+          </section>
+
+          <section id="lexicon-menu" class="menu-section hidden">
+            <h3>Herramientas</h3>
+            <ul>
+              <li>
+                <button id="open-analyzer" class="subtool-btn">Render + analisis de palabra</button>
+              </li>
+            </ul>
+          </section>
+        </aside>
+
+        <main class="content">
+          <section id="lore-view" class="view">
+            <div class="content-header">
+              <h2>Lore</h2>
+              <p>Selecciona una raza o idioma en el menu.</p>
+            </div>
+            <article id="lore-content" class="lore-content"></article>
+          </section>
+
+          <section id="lexicon-view" class="view hidden">
+            <div class="content-header">
+              <h2>Lexicon</h2>
+              <p>Renderiza una palabra y revisa sus raices.</p>
+            </div>
+
+            <form id="analyze-form" class="tool-form">
+              <label>
+                Idioma
+                <select id="language" required>
+                  <option value="lapag">Lapag</option>
+                  <option value="goxjix">Gox'jix</option>
+                  <option value="dekayun">Dekayun</option>
+                  <option value="negelch">Negelch</option>
+                  <option value="idoling">Idoling</option>
+                  <option value="jobide">Jobid'e</option>
+                  <option value="gornach_kagsha">Gornach-Kagsha</option>
+                </select>
+              </label>
+
+              <label>
+                Palabra
+                <input id="word" type="text" placeholder="kamama" minlength="1" required />
+              </label>
+
+              <button type="submit">Analizar</button>
+            </form>
+
+            <section class="results">
+              <div class="word-image-box">
+                <h3>Render</h3>
+                <img id="word-image" alt="Render de palabra" />
+              </div>
+
+              <div class="analysis-box">
+                <h3>Analisis</h3>
+                <div id="analysis-output" class="analysis-output empty">
+                  Ejecuta un analisis para ver resultados.
+                </div>
+              </div>
+            </section>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

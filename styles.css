@@ -1,0 +1,264 @@
+:root {
+  --bg: #f6f6ef;
+  --panel: #fffdf7;
+  --panel-2: #f1eee1;
+  --text: #212121;
+  --muted: #666150;
+  --line: #ddd5bf;
+  --accent: #8b6c2c;
+  --accent-2: #3f6c5f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 20% 10%, #fff8d8 0, transparent 35%),
+    radial-gradient(circle at 90% 80%, #e7f2ef 0, transparent 35%),
+    var(--bg);
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 253, 247, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.subtitle {
+  margin: 0.1rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.menu-toggle {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  min-height: calc(100vh - 80px);
+}
+
+.sidebar {
+  border-right: 1px solid var(--line);
+  background: var(--panel);
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.menu-section + .menu-section {
+  margin-top: 1.25rem;
+}
+
+.menu-section h2,
+.menu-section h3,
+.menu-section h4 {
+  margin: 0 0 0.6rem;
+}
+
+.menu-section h4 {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.primary-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.nav-btn,
+.subtool-btn,
+.tool-form button {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.55rem 0.8rem;
+  background: var(--panel-2);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.nav-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: #7a5e25;
+}
+
+.menu-note {
+  margin: 0.2rem 0 0.8rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+ul {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+li {
+  margin-bottom: 0.3rem;
+}
+
+.menu-item-btn {
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  padding: 0.2rem 0;
+  cursor: pointer;
+}
+
+.menu-item-btn:hover {
+  color: var(--accent-2);
+}
+
+.content {
+  padding: 1.2rem;
+}
+
+.content-header h2 {
+  margin: 0;
+}
+
+.content-header p {
+  margin: 0.3rem 0 1rem;
+  color: var(--muted);
+}
+
+.lore-content {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+  line-height: 1.5;
+}
+
+.lore-content img {
+  max-width: 100%;
+}
+
+.koten-word {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+
+.koten-word img {
+  max-height: 1.5em;
+  width: auto;
+}
+
+.tool-form {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.tool-form label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.tool-form input,
+.tool-form select {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.6rem;
+  font: inherit;
+  color: var(--text);
+  background: #fff;
+}
+
+.results {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1rem;
+}
+
+.word-image-box,
+.analysis-box {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.word-image-box h3,
+.analysis-box h3 {
+  margin-top: 0;
+}
+
+#word-image {
+  width: 100%;
+  min-height: 100px;
+  object-fit: contain;
+  background: #fff;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+}
+
+.analysis-output.empty {
+  color: var(--muted);
+}
+
+.root-item {
+  border-top: 1px dashed var(--line);
+  padding-top: 0.6rem;
+  margin-top: 0.6rem;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .sidebar.open {
+    display: block;
+  }
+
+  .tool-form {
+    grid-template-columns: 1fr;
+  }
+
+  .results {
+    grid-template-columns: 1fr;
+  }
+}
