@@ -47,10 +47,13 @@ export function createLexiconViewController(container, languages) {
   const select = document.createElement("select");
   select.id = "language";
   select.required = true;
-  languages.forEach(({ slug, title }) => {
+  languages.forEach((language) => {
+    const code = language.code || language.slug;
+    const name = language.name || language.title;
+    if (!code || code === "lang") return;
     const opt = document.createElement("option");
-    opt.value = slug;
-    opt.textContent = title;
+    opt.value = code;
+    opt.textContent = name || code;
     select.appendChild(opt);
   });
 
@@ -62,7 +65,7 @@ export function createLexiconViewController(container, languages) {
   wordInput.required = true;
 
   const submitBtn = document.createElement("button");
-  submitBtn.className = "btn";
+  submitBtn.className = "btn btn-pill";
   submitBtn.type = "submit";
   submitBtn.textContent = "Analizar";
 

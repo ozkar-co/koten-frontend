@@ -47,6 +47,21 @@ export function createLoreViewController({
     }
   }
 
+  function attachImageModal(container) {
+    container.querySelectorAll("img.lore-image").forEach((img) => {
+      img.addEventListener("click", () => {
+        const modal = document.createElement("div");
+        modal.className = "img-modal";
+        const full = document.createElement("img");
+        full.src = img.src.replace(/_thumb(?=([?#]|$))/, "");
+        full.alt = img.alt;
+        modal.appendChild(full);
+        modal.addEventListener("click", () => modal.remove());
+        document.body.appendChild(modal);
+      });
+    });
+  }
+
   async function loadHomeIntro() {
     loreContent.innerHTML = "<p>Cargando documento...</p>";
 
@@ -54,6 +69,7 @@ export function createLoreViewController({
       const html = await fetchText("/lore/koten");
       loreContent.innerHTML = normalizeLoreHtml(html);
       attachWordTooltips(loreContent);
+      attachImageModal(loreContent);
       document.title = "Koten | Inicio";
     } catch (error) {
       loreContent.innerHTML = `<p>${error.message}</p>`;
@@ -77,6 +93,7 @@ export function createLoreViewController({
       const html = await getLoreDocument(type, slug);
       loreContent.innerHTML = normalizeLoreHtml(html);
       attachWordTooltips(loreContent);
+      attachImageModal(loreContent);
       document.title = `Koten | ${title}`;
     } catch (error) {
       loreContent.innerHTML = `<p>${error.message}</p>`;

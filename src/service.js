@@ -5,7 +5,8 @@ export function normalizeLoreHtml(html) {
     .replaceAll('src="/api/word/', `src="${API_BASE}/word/`)
     .replaceAll('src="/word/', `src="${API_BASE}/word/`)
     .replaceAll('href="/api/word/', `href="${API_BASE}/word/`)
-    .replaceAll('href="/word/', `href="${API_BASE}/word/`);
+    .replaceAll('href="/word/', `href="${API_BASE}/word/`)
+    .replace(/src="\/(?:api\/)?image\/([^"]+)\.[^".]+"/g, `src="${API_BASE}/image/$1_thumb"`);
 }
 
 export async function fetchJson(path, options = {}) {
@@ -59,4 +60,14 @@ export async function analyzeLexiconWord(language, word) {
 
 export async function getRootDetail(root) {
   return fetchJson(`/lexicon/roots/${encodeURIComponent(root)}`);
+}
+
+export async function getLexiconLanguages() {
+  try {
+    const payload = await fetchJson("/api/lexicon/languages");
+    return payload?.languages || [];
+  } catch {
+    const payload = await fetchJson("/lexicon/languages");
+    return payload?.languages || [];
+  }
 }

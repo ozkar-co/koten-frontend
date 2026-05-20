@@ -7,7 +7,11 @@
   --muted: #666150;
   --line: #ddd5bf;
   --accent: #8b6c2c;
+  --accent-border: #7a5e25;
   --accent-2: #3f6c5f;
+  --white: #fff;
+  --bg-warm: #fff8d8;
+  --bg-cool: #e7f2ef;
 
   --radius: 10px;
   --radius-lg: 14px;
@@ -22,8 +26,8 @@ body {
   font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at 20% 10%, #fff8d8 0, transparent 35%),
-    radial-gradient(circle at 90% 80%, #e7f2ef 0, transparent 35%),
+    radial-gradient(circle at 20% 10%, var(--bg-warm) 0, transparent 35%),
+    radial-gradient(circle at 90% 80%, var(--bg-cool) 0, transparent 35%),
     var(--bg);
 }
 
@@ -51,8 +55,8 @@ li { margin-bottom: 0.3rem; }
 
 .btn-pill   { border-radius: 999px; }
 .btn-ghost  { border: 0; background: transparent; padding: 0.2rem 0; font-weight: 400; }
-.btn-active { background: var(--accent); border-color: #7a5e25; color: #fff; }
-.btn-login  { background: #f0f5f4; border-color: #c9d8d3; }
+.btn-active { background: var(--accent); border-color: var(--accent-border); color: var(--white); }
+.btn-active:hover { color: var(--text); }
 .btn-muted  { color: var(--muted); cursor: not-allowed; }
 .btn-ghost:hover { color: var(--accent-2); }
 
@@ -123,6 +127,37 @@ li { margin-bottom: 0.3rem; }
 .lore-content { line-height: 1.5; }
 .lore-content img { max-width: 100%; }
 
+.lore-image {
+  display: block;
+  height: 216px;
+  width: auto;
+  max-width: 100%;
+  margin: 1.5rem auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  cursor: zoom-in;
+  object-fit: cover;
+}
+
+/* ─── Image modal ───────────────────────────────────────────────── */
+.img-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  cursor: zoom-out;
+}
+
+.img-modal img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+}
+
 .koten-word     { display: inline-block; vertical-align: middle; margin: 0 2px; }
 .koten-word img { max-height: 1.5em; width: auto; }
 
@@ -144,7 +179,7 @@ li { margin-bottom: 0.3rem; }
   padding: 0.6rem;
   font: inherit;
   color: var(--text);
-  background: #fff;
+  background: var(--white);
 }
 
 .results {
@@ -157,7 +192,7 @@ li { margin-bottom: 0.3rem; }
   width: 100%;
   min-height: 100px;
   object-fit: contain;
-  background: #fff;
+  background: var(--white);
   border: 1px dashed var(--line);
   border-radius: var(--radius);
 }

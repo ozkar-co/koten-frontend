@@ -1,5 +1,6 @@
 import { createLexiconViewController } from "./views/lexiconView.js";
 import { createLoreViewController } from "./views/loreView.js";
+import { getLexiconLanguages } from "./service.js";
 
 const sidebar      = document.getElementById("sidebar");
 const loreContent  = document.getElementById("lore-content");
@@ -71,8 +72,9 @@ async function bootstrap() {
   loreViewController = createLoreViewController({ raceList, languageList, ruleList, loreContent });
   initNavigation();
   loreViewController.interceptMarkdownLinks();
-  const index = await loreViewController.loadLoreIndex();
-  createLexiconViewController(lexiconView, index?.languages || []);
+  await loreViewController.loadLoreIndex();
+  const lexiconLanguages = await getLexiconLanguages();
+  createLexiconViewController(lexiconView, lexiconLanguages);
   await navigate("home");
 }
 
