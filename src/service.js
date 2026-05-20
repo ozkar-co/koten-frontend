@@ -2,11 +2,9 @@ export const API_BASE = "https://koten-api.ozkr.net";
 
 export function normalizeLoreHtml(html) {
   return html
-    .replaceAll('src="/api/word/', `src="${API_BASE}/word/`)
     .replaceAll('src="/word/', `src="${API_BASE}/word/`)
-    .replaceAll('href="/api/word/', `href="${API_BASE}/word/`)
     .replaceAll('href="/word/', `href="${API_BASE}/word/`)
-    .replace(/src="\/(?:api\/)?image\/([^"]+)\.[^".]+"/g, `src="${API_BASE}/image/$1_thumb"`);
+    .replace(/src="\/image\/([^"]+)\.[^".]+"/g, `src="${API_BASE}/image/$1_thumb"`);
 }
 
 export async function fetchJson(path, options = {}) {
@@ -63,11 +61,27 @@ export async function getRootDetail(root) {
 }
 
 export async function getLexiconLanguages() {
+  let payload = null;
+
   try {
-    const payload = await fetchJson("/api/lexicon/languages");
-    return payload?.languages || [];
+    payload = await fetchJson("/lexicon/languages");
   } catch {
-    const payload = await fetchJson("/lexicon/languages");
-    return payload?.languages || [];
+    return [];
   }
+
+  const list = Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload?.languages)
+      ? payload.languages
+      : Array.isArray(payload?.data)
+        ? payload.data
+        : [];
+
+  return list
+    .map((language) => ({
+      code: language.code || language.slug || "",
+      name: language.name || language.title || language.code || language.slug || "",
+      prefix: language.prefix || "",
+    }))
+    .filter((language) => language.code && !/^lang(?:\/lang)?$/i.test(language.code));
 }

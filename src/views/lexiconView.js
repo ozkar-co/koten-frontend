@@ -43,14 +43,16 @@ function renderAnalysisCard(data, rootDetailsMap) {
 }
 
 export function createLexiconViewController(container, languages) {
+  container.innerHTML = "";
+
   // Build DOM
   const select = document.createElement("select");
   select.id = "language";
   select.required = true;
   languages.forEach((language) => {
-    const code = language.code || language.slug;
-    const name = language.name || language.title;
-    if (!code || code === "lang") return;
+    const code = language.code;
+    const name = language.name;
+    if (!code) return;
     const opt = document.createElement("option");
     opt.value = code;
     opt.textContent = name || code;
