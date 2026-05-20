@@ -14,7 +14,6 @@ const lexiconMenu = document.getElementById("lexicon-menu");
 const loreView = document.getElementById("lore-view");
 const lexiconView = document.getElementById("lexicon-view");
 const siteNavButtons = document.querySelectorAll("button.site-nav-btn");
-const menuToggle = document.getElementById("menu-toggle");
 const sidebar = document.getElementById("sidebar");
 const racesMenuLink = document.getElementById("races-menu-link");
 const languagesMenuLink = document.getElementById("languages-menu-link");
@@ -46,7 +45,6 @@ function setView(view, sidebarMenu = null) {
   lexiconMenu.classList.toggle("hidden", sidebarMenu !== "lexicon");
 
   sidebar.classList.toggle("hidden", !showSidebar);
-  sidebar.classList.remove("open");
 }
 
 function setActiveTopMenu(target) {
@@ -117,14 +115,6 @@ function initNavigation() {
     button.addEventListener("click", async () => {
       await handleTopMenuSelection(button.dataset.target);
     });
-  });
-
-  menuToggle.addEventListener("click", () => {
-    if (sidebar.classList.contains("hidden")) {
-      return;
-    }
-
-    sidebar.classList.toggle("open");
   });
 
   racesMenuLink.addEventListener("click", async () => {

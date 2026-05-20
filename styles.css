@@ -178,12 +178,9 @@ li { margin-bottom: 0.3rem; }
   .layout { grid-template-columns: 1fr; }
 
   .sidebar {
-    display: none;
     border-right: 0;
     border-bottom: 1px solid var(--line);
   }
-
-  .sidebar.open { display: block; }
 
   .tool-form,
   .results { grid-template-columns: 1fr; }
