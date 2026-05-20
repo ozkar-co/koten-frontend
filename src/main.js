@@ -3,16 +3,24 @@ import { createLoreViewController } from "./views/loreView.js";
 
 const raceList = document.getElementById("race-list");
 const languageList = document.getElementById("language-list");
+const ruleList = document.getElementById("rule-list");
+const homeContent = document.getElementById("home-content");
 const loreContent = document.getElementById("lore-content");
-const loreMenu = document.getElementById("lore-menu");
+const homeView = document.getElementById("home-view");
+const racesMenu = document.getElementById("races-menu");
+const languagesMenu = document.getElementById("languages-menu");
+const rulesMenu = document.getElementById("rules-menu");
 const lexiconMenu = document.getElementById("lexicon-menu");
 const loreView = document.getElementById("lore-view");
 const lexiconView = document.getElementById("lexicon-view");
-const navButtons = document.querySelectorAll(".nav-btn");
+const siteNavButtons = document.querySelectorAll(".site-nav-btn");
 const menuToggle = document.getElementById("menu-toggle");
 const sidebar = document.getElementById("sidebar");
+const racesMenuLink = document.getElementById("races-menu-link");
+const languagesMenuLink = document.getElementById("languages-menu-link");
+const rulesMenuLink = document.getElementById("rules-menu-link");
+const lexiconMenuLink = document.getElementById("lexicon-menu-link");
 const openAnalyzerBtn = document.getElementById("open-analyzer");
-const menuNote = document.querySelector(".menu-note");
 
 const analyzeForm = document.getElementById("analyze-form");
 const languageInput = document.getElementById("language");
@@ -20,39 +28,133 @@ const wordInput = document.getElementById("word");
 const wordImage = document.getElementById("word-image");
 const analysisOutput = document.getElementById("analysis-output");
 
-function setView(view) {
+let loreViewController;
+
+function setView(view, sidebarMenu = null) {
+  const isHome = view === "home";
   const isLore = view === "lore";
+  const isLexicon = view === "lexicon";
+  const showSidebar = isLore || isLexicon;
 
+  homeView.classList.toggle("hidden", !isHome);
   loreView.classList.toggle("hidden", !isLore);
-  lexiconView.classList.toggle("hidden", isLore);
-  loreMenu.classList.toggle("hidden", !isLore);
-  lexiconMenu.classList.toggle("hidden", isLore);
+  lexiconView.classList.toggle("hidden", !isLexicon);
 
-  navButtons.forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.view === view);
-  });
+  racesMenu.classList.toggle("hidden", sidebarMenu !== "races");
+  languagesMenu.classList.toggle("hidden", sidebarMenu !== "languages");
+  rulesMenu.classList.toggle("hidden", sidebarMenu !== "rules");
+  lexiconMenu.classList.toggle("hidden", sidebarMenu !== "lexicon");
 
+  sidebar.classList.toggle("hidden", !showSidebar);
   sidebar.classList.remove("open");
 }
 
+function setActiveTopMenu(target) {
+  siteNavButtons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.target === target);
+  });
+}
+
+async function handleTopMenuSelection(target) {
+  if (target === "home") {
+    setView("home");
+    setActiveTopMenu("home");
+    await loreViewController.loadHomeIntro();
+    return;
+  }
+
+  if (target === "lexicon") {
+    setView("lexicon", "lexicon");
+    setActiveTopMenu("lexicon");
+    return;
+  }
+
+  if (target === "races") {
+    setView("lore", "races");
+    setActiveTopMenu("races");
+    await loreViewController.loadLoreDocument("races", "races", "Razas de Koten");
+    return;
+  }
+
+  if (target === "languages") {
+    setView("lore", "languages");
+    setActiveTopMenu("languages");
+    await loreViewController.loadLoreDocument("lang", "lang", "Los idiomas de Koten");
+    return;
+  }
+
+  if (target === "rules") {
+    setView("lore", "rules");
+    setActiveTopMenu("rules");
+    await loreViewController.loadLoreDocument("rules", "rules", "Reglas");
+  }
+}
+
+async function reloadSidebarSection(section) {
+  if (section === "races") {
+    await handleTopMenuSelection("races");
+    return;
+  }
+
+  if (section === "languages") {
+    await handleTopMenuSelection("languages");
+    return;
+  }
+
+  if (section === "rules") {
+    await handleTopMenuSelection("rules");
+    return;
+  }
+
+  if (section === "lexicon") {
+    setView("lexicon", "lexicon");
+    setActiveTopMenu("lexicon");
+  }
+}
+
 function initNavigation() {
-  navButtons.forEach((button) => {
-    button.addEventListener("click", () => setView(button.dataset.view));
+  siteNavButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
+      await handleTopMenuSelection(button.dataset.target);
+    });
   });
 
   menuToggle.addEventListener("click", () => {
+    if (sidebar.classList.contains("hidden")) {
+      return;
+    }
+
     sidebar.classList.toggle("open");
   });
 
-  openAnalyzerBtn.addEventListener("click", () => setView("lexicon"));
+  racesMenuLink.addEventListener("click", async () => {
+    await reloadSidebarSection("races");
+  });
+
+  languagesMenuLink.addEventListener("click", async () => {
+    await reloadSidebarSection("languages");
+  });
+
+  rulesMenuLink.addEventListener("click", async () => {
+    await reloadSidebarSection("rules");
+  });
+
+  lexiconMenuLink.addEventListener("click", async () => {
+    await reloadSidebarSection("lexicon");
+  });
+
+  openAnalyzerBtn.addEventListener("click", async () => {
+    await reloadSidebarSection("lexicon");
+  });
 }
 
 function bootstrap() {
-  const loreViewController = createLoreViewController({
+  loreViewController = createLoreViewController({
     raceList,
     languageList,
+    ruleList,
+    homeContent,
     loreContent,
-    menuNote,
   });
 
   const lexiconViewController = createLexiconViewController({
@@ -67,6 +169,8 @@ function bootstrap() {
   loreViewController.interceptMarkdownLinks();
   loreViewController.loadLoreIndex();
   lexiconViewController.init();
+  setView("home");
+  loreViewController.loadHomeIntro();
 }
 
 bootstrap();

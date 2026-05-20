@@ -24,7 +24,6 @@ function renderAnalysisCard(data, rootDetailsMap) {
 
       return `
         <div class="root-item">
-          <div><strong>Posicion:</strong> ${root.position}</div>
           <div><strong>Fragmento:</strong> ${root.source_root}</div>
           <div><strong>Raices lapag:</strong> ${lapagRoots.join(", ") || "-"}</div>
           ${details || ""}
@@ -57,6 +56,7 @@ export function createLexiconViewController({ analyzeForm, languageInput, wordIn
     analysisOutput.classList.remove("empty");
     analysisOutput.innerHTML = "Analizando...";
     wordImage.src = getWordImageUrl(language, word);
+    wordImage.title = word;
 
     try {
       const analysis = await analyzeLexiconWord(language, word);

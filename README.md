@@ -40,10 +40,10 @@ PORT=3006 HOST=0.0.0.0 ./run.sh
 
 ## Estructura
 
-- `index.html`: layout principal y secciones Lore/Lexicon
+- `index.html`: layout principal con menu superior (Inicio, Lore, Lexicon, Login)
 - `styles.css`: estilo minimalista + responsive
 - `run.sh`: servidor estatico para local/server
-- `src/main.js`: bootstrap y navegacion
+- `src/main.js`: bootstrap, navegacion superior y menu contextual
 - `src/service.js`: conexion con backend Koten API
 - `src/views/loreView.js`: vista de Lore
 - `src/views/lexiconView.js`: vista de Lexicon

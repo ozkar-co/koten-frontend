@@ -20,45 +20,63 @@
           <h1>Koten</h1>
           <p class="subtitle">El Lugar donde nace la vida</p>
         </div>
+        <nav class="site-nav" aria-label="Menu principal">
+          <button class="site-nav-btn active" data-target="home">Inicio</button>
+          <button class="site-nav-btn" data-target="races">Razas</button>
+          <button class="site-nav-btn" data-target="languages">Idiomas</button>
+          <button class="site-nav-btn" data-target="rules">Reglas</button>
+          <button class="site-nav-btn" data-target="lexicon">Lexicon</button>
+          <a class="site-nav-login" href="/admin/login">Login</a>
+        </nav>
       </header>
 
       <div class="layout">
         <aside id="sidebar" class="sidebar">
-          <section class="menu-section">
-            <h2>Secciones</h2>
-            <nav class="primary-nav">
-              <button data-view="lore" class="nav-btn active">Lore</button>
-              <button data-view="lexicon" class="nav-btn">Lexicon</button>
-            </nav>
+          <section id="races-menu" class="menu-section hidden">
+            <h3><button id="races-menu-link" class="menu-section-link">Razas</button></h3>
+            <ul id="race-list"></ul>
           </section>
 
-          <section id="lore-menu" class="menu-section">
-            <h3>Lore</h3>
-            <p class="menu-note">Cargando indice...</p>
-            <div class="menu-groups">
-              <div>
-                <h4>Razas</h4>
-                <ul id="race-list"></ul>
-              </div>
-              <div>
-                <h4>Idiomas</h4>
-                <ul id="language-list"></ul>
-              </div>
-            </div>
+          <section id="languages-menu" class="menu-section hidden">
+            <h3><button id="languages-menu-link" class="menu-section-link">Idiomas</button></h3>
+            <ul id="language-list"></ul>
+          </section>
+
+          <section id="rules-menu" class="menu-section hidden">
+            <h3><button id="rules-menu-link" class="menu-section-link">Reglas</button></h3>
+            <ul id="rule-list"></ul>
           </section>
 
           <section id="lexicon-menu" class="menu-section hidden">
-            <h3>Herramientas</h3>
+            <h3><button id="lexicon-menu-link" class="menu-section-link">Lexicon</button></h3>
             <ul>
               <li>
-                <button id="open-analyzer" class="subtool-btn">Render + analisis de palabra</button>
+                <button id="open-analyzer" class="menu-item-btn">Analisis</button>
+              </li>
+              <li>
+                <button class="menu-item-btn menu-item-btn-disabled" type="button" disabled>
+                  Buscador
+                </button>
+              </li>
+              <li>
+                <button class="menu-item-btn menu-item-btn-disabled" type="button" disabled>
+                  Traductor
+                </button>
               </li>
             </ul>
           </section>
         </aside>
 
         <main class="content">
-          <section id="lore-view" class="view">
+          <section id="home-view" class="view">
+            <div class="content-header">
+              <h2>Inicio</h2>
+              <p>Presentacion general del mundo de Koten.</p>
+            </div>
+            <article id="home-content" class="lore-content"></article>
+          </section>
+
+          <section id="lore-view" class="view hidden">
             <div class="content-header">
               <h2>Lore</h2>
               <p>Selecciona una raza o idioma en el menu.</p>
