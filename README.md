@@ -35,3 +35,11 @@ PORT=3006 HOST=0.0.0.0 ./run.sh
 - `src/main.js`: bootstrap, navegacion superior y menu contextual
 - `src/service.js`: conexion con backend Koten API
 - `src/views/`: vistas de cada seccion
+
+## Principios de desarrollo
+
+- **KISS**: el codigo minimo posible. Cuantas menos lineas, mejor.
+- **No inventar contenido**: si el backend no lo tiene, mostrar el error real.
+- **No hardcodear listas**: todo viene del backend.
+- **El HTML es solo estructura**: la logica vive en JS.
+- **No parchear layouts con hacks CSS**: si el layout falla, simplificar la estructura.

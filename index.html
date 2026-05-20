@@ -29,8 +29,8 @@
         </nav>
       </header>
 
-      <div class="layout">
-        <aside id="sidebar" class="sidebar">
+      <div id="main-layout" class="layout">
+        <aside id="sidebar" class="sidebar hidden">
           <section id="races-menu" class="menu-section hidden">
             <h3><button id="races-menu-link" class="btn-ghost">Razas</button></h3>
             <ul id="race-list"></ul>
@@ -49,33 +49,19 @@
           <section id="lexicon-menu" class="menu-section hidden">
             <h3><button id="lexicon-menu-link" class="btn-ghost">Lexicon</button></h3>
             <ul>
-              <li>
-                <button id="open-analyzer" class="btn-ghost">Analisis</button>
-              </li>
-              <li>
-                <button class="btn-ghost btn-muted" type="button" disabled>
-                  Buscador
-                </button>
-              </li>
-              <li>
-                <button class="btn-ghost btn-muted" type="button" disabled>
-                  Traductor
-                </button>
-              </li>
+              <li><button id="open-analyzer" class="btn-ghost">Analisis</button></li>
+              <li><button class="btn-ghost btn-muted" disabled>Buscador</button></li>
+              <li><button class="btn-ghost btn-muted" disabled>Traductor</button></li>
             </ul>
           </section>
         </aside>
 
         <main class="content">
-          <section id="home-view" class="view">
-            <article id="home-content" class="lore-content panel"></article>
-          </section>
-
-          <section id="lore-view" class="view hidden">
+          <section id="lore-view">
             <article id="lore-content" class="lore-content panel"></article>
           </section>
 
-          <section id="lexicon-view" class="view hidden"></section>
+          <section id="lexicon-view" class="hidden"></section>
         </main>
       </div>
     </div>

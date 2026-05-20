@@ -96,6 +96,8 @@ li { margin-bottom: 0.3rem; }
   min-height: calc(100vh - 80px);
 }
 
+.sidebar.hidden + main { grid-column: 1 / -1; }
+
 /* ─── Sidebar ───────────────────────────────────────────────────── */
 .sidebar {
   border-right: 1px solid var(--line);

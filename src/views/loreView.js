@@ -4,7 +4,6 @@ export function createLoreViewController({
   raceList,
   languageList,
   ruleList,
-  homeContent,
   loreContent,
 }) {
   function createLoreMenuItem({ slug, title }, type) {
@@ -27,15 +26,15 @@ export function createLoreViewController({
       languageList.innerHTML = "";
       ruleList.innerHTML = "";
 
-      index.races.forEach((item) => {
+      index.races.filter((item) => item.slug !== "races").forEach((item) => {
         raceList.appendChild(createLoreMenuItem(item, "races"));
       });
 
-      index.languages.forEach((item) => {
+      index.languages.filter((item) => item.slug !== "lang").forEach((item) => {
         languageList.appendChild(createLoreMenuItem(item, "lang"));
       });
 
-      (index.sections?.rules || []).forEach((item) => {
+      (index.sections?.rules || []).filter((item) => item.slug !== "rules").forEach((item) => {
         ruleList.appendChild(createLoreMenuItem(item, "rules"));
       });
 
@@ -49,15 +48,15 @@ export function createLoreViewController({
   }
 
   async function loadHomeIntro() {
-    homeContent.innerHTML = "<p>Cargando documento...</p>";
+    loreContent.innerHTML = "<p>Cargando documento...</p>";
 
     try {
       const html = await fetchText("/lore/koten");
-      homeContent.innerHTML = normalizeLoreHtml(html);
-      attachWordTooltips(homeContent);
+      loreContent.innerHTML = normalizeLoreHtml(html);
+      attachWordTooltips(loreContent);
       document.title = "Koten | Inicio";
     } catch (error) {
-      homeContent.innerHTML = `<p>${error.message}</p>`;
+      loreContent.innerHTML = `<p>${error.message}</p>`;
     }
   }
 
