@@ -15,51 +15,51 @@
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menu">Menu</button>
+        <button id="menu-toggle" class="btn" aria-label="Abrir menu">Menu</button>
         <div>
           <h1>Koten</h1>
           <p class="subtitle">El Lugar donde nace la vida</p>
         </div>
         <nav class="site-nav" aria-label="Menu principal">
-          <button class="site-nav-btn active" data-target="home">Inicio</button>
-          <button class="site-nav-btn" data-target="races">Razas</button>
-          <button class="site-nav-btn" data-target="languages">Idiomas</button>
-          <button class="site-nav-btn" data-target="rules">Reglas</button>
-          <button class="site-nav-btn" data-target="lexicon">Lexicon</button>
-          <a class="site-nav-login" href="/admin/login">Login</a>
+          <button class="btn btn-pill site-nav-btn btn-active" data-target="home">Inicio</button>
+          <button class="btn btn-pill site-nav-btn" data-target="races">Razas</button>
+          <button class="btn btn-pill site-nav-btn" data-target="languages">Idiomas</button>
+          <button class="btn btn-pill site-nav-btn" data-target="rules">Reglas</button>
+          <button class="btn btn-pill site-nav-btn" data-target="lexicon">Lexicon</button>
+          <a class="btn btn-pill btn-login site-nav-btn" href="/admin/login">Login</a>
         </nav>
       </header>
 
       <div class="layout">
         <aside id="sidebar" class="sidebar">
           <section id="races-menu" class="menu-section hidden">
-            <h3><button id="races-menu-link" class="menu-section-link">Razas</button></h3>
+            <h3><button id="races-menu-link" class="btn-ghost">Razas</button></h3>
             <ul id="race-list"></ul>
           </section>
 
           <section id="languages-menu" class="menu-section hidden">
-            <h3><button id="languages-menu-link" class="menu-section-link">Idiomas</button></h3>
+            <h3><button id="languages-menu-link" class="btn-ghost">Idiomas</button></h3>
             <ul id="language-list"></ul>
           </section>
 
           <section id="rules-menu" class="menu-section hidden">
-            <h3><button id="rules-menu-link" class="menu-section-link">Reglas</button></h3>
+            <h3><button id="rules-menu-link" class="btn-ghost">Reglas</button></h3>
             <ul id="rule-list"></ul>
           </section>
 
           <section id="lexicon-menu" class="menu-section hidden">
-            <h3><button id="lexicon-menu-link" class="menu-section-link">Lexicon</button></h3>
+            <h3><button id="lexicon-menu-link" class="btn-ghost">Lexicon</button></h3>
             <ul>
               <li>
-                <button id="open-analyzer" class="menu-item-btn">Analisis</button>
+                <button id="open-analyzer" class="btn-ghost">Analisis</button>
               </li>
               <li>
-                <button class="menu-item-btn menu-item-btn-disabled" type="button" disabled>
+                <button class="btn-ghost btn-muted" type="button" disabled>
                   Buscador
                 </button>
               </li>
               <li>
-                <button class="menu-item-btn menu-item-btn-disabled" type="button" disabled>
+                <button class="btn-ghost btn-muted" type="button" disabled>
                   Traductor
                 </button>
               </li>
@@ -73,7 +73,7 @@
               <h2>Inicio</h2>
               <p>Presentacion general del mundo de Koten.</p>
             </div>
-            <article id="home-content" class="lore-content"></article>
+            <article id="home-content" class="lore-content panel"></article>
           </section>
 
           <section id="lore-view" class="view hidden">
@@ -81,7 +81,7 @@
               <h2>Lore</h2>
               <p>Selecciona una raza o idioma en el menu.</p>
             </div>
-            <article id="lore-content" class="lore-content"></article>
+            <article id="lore-content" class="lore-content panel"></article>
           </section>
 
           <section id="lexicon-view" class="view hidden">
@@ -109,16 +109,16 @@
                 <input id="word" type="text" placeholder="kamama" minlength="1" required />
               </label>
 
-              <button type="submit">Analizar</button>
+              <button class="btn" type="submit">Analizar</button>
             </form>
 
             <section class="results">
-              <div class="word-image-box">
+              <div class="panel">
                 <h3>Render</h3>
                 <img id="word-image" alt="Render de palabra" />
               </div>
 
-              <div class="analysis-box">
+              <div class="panel">
                 <h3>Analisis</h3>
                 <div id="analysis-output" class="analysis-output empty">
                   Ejecuta un analisis para ver resultados.

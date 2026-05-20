@@ -13,7 +13,7 @@ const rulesMenu = document.getElementById("rules-menu");
 const lexiconMenu = document.getElementById("lexicon-menu");
 const loreView = document.getElementById("lore-view");
 const lexiconView = document.getElementById("lexicon-view");
-const siteNavButtons = document.querySelectorAll(".site-nav-btn");
+const siteNavButtons = document.querySelectorAll("button.site-nav-btn");
 const menuToggle = document.getElementById("menu-toggle");
 const sidebar = document.getElementById("sidebar");
 const racesMenuLink = document.getElementById("races-menu-link");
@@ -51,7 +51,7 @@ function setView(view, sidebarMenu = null) {
 
 function setActiveTopMenu(target) {
   siteNavButtons.forEach((button) => {
-    button.classList.toggle("active", button.dataset.target === target);
+    button.classList.toggle("btn-active", button.dataset.target === target);
   });
 }
 

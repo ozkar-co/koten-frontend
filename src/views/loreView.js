@@ -10,7 +10,7 @@ export function createLoreViewController({
   function createLoreMenuItem({ slug, title }, type) {
     const li = document.createElement("li");
     const btn = document.createElement("button");
-    btn.className = "menu-item-btn";
+    btn.className = "btn-ghost";
     btn.textContent = title;
     btn.addEventListener("click", () => {
       loadLoreDocument(type, slug, title);
