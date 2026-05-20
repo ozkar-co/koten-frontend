@@ -126,6 +126,16 @@ li { margin-bottom: 0.3rem; }
 
 .lore-content { line-height: 1.5; }
 .lore-content img { max-width: 100%; }
+.lore-content a {
+  color: var(--accent-2);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.lore-content a:hover,
+.lore-content a:focus-visible {
+  color: var(--accent);
+}
 
 .lore-image {
   display: block;

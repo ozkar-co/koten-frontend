@@ -6,6 +6,9 @@ export function createLoreViewController({
   ruleList,
   loreContent,
 }) {
+  let loreIndexCache = null;
+  let currentLoreType = null;
+
   function createLoreMenuItem({ slug, title }, type) {
     const li = document.createElement("li");
     const btn = document.createElement("button");
@@ -21,6 +24,7 @@ export function createLoreViewController({
   async function loadLoreIndex() {
     try {
       const index = await getLoreIndex();
+      loreIndexCache = index;
 
       raceList.innerHTML = "";
       languageList.innerHTML = "";
@@ -63,6 +67,7 @@ export function createLoreViewController({
   }
 
   async function loadHomeIntro() {
+    currentLoreType = null;
     loreContent.innerHTML = "<p>Cargando documento...</p>";
 
     try {
@@ -89,6 +94,7 @@ export function createLoreViewController({
 
   async function loadLoreDocument(type, slug, title) {
     try {
+      currentLoreType = type;
       loreContent.innerHTML = "<p>Cargando documento...</p>";
       const html = await getLoreDocument(type, slug);
       loreContent.innerHTML = normalizeLoreHtml(html);
@@ -100,17 +106,68 @@ export function createLoreViewController({
     }
   }
 
+  function findLoreDocumentBySlug(slug) {
+    if (!loreIndexCache) return null;
+
+    const races = loreIndexCache.races || [];
+    const languages = loreIndexCache.languages || [];
+    const rules = loreIndexCache.sections?.rules || [];
+
+    const raceMatch = races.find((item) => item.slug === slug);
+    if (raceMatch) return { type: "races", title: raceMatch.title || slug, slug };
+
+    const languageMatch = languages.find((item) => item.slug === slug);
+    if (languageMatch) return { type: "lang", title: languageMatch.title || slug, slug };
+
+    const ruleMatch = rules.find((item) => item.slug === slug);
+    if (ruleMatch) return { type: "rules", title: ruleMatch.title || slug, slug };
+
+    return null;
+  }
+
+  function parseMarkdownLink(href) {
+    const cleanHref = href.split("#")[0].split("?")[0].trim();
+    if (!cleanHref || !cleanHref.endsWith(".md")) return null;
+
+    const parts = cleanHref.split("/").filter(Boolean);
+    const file = parts[parts.length - 1];
+    const slug = file.replace(/\.md$/i, "");
+    if (!slug) return null;
+
+    const explicitType = parts.length > 1 ? parts[0] : null;
+    if (explicitType === "races") return { type: "races", slug };
+    if (explicitType === "lang" || explicitType === "languages") return { type: "lang", slug };
+    if (explicitType === "rules") return { type: "rules", slug };
+
+    return { type: currentLoreType, slug };
+  }
+
   function interceptMarkdownLinks() {
-    loreContent.addEventListener("click", (event) => {
+    loreContent.addEventListener("click", async (event) => {
       const link = event.target.closest("a");
 
       if (!link) {
         return;
       }
 
-      if (link.getAttribute("href")?.endsWith(".md")) {
-        event.preventDefault();
+      const href = link.getAttribute("href") || "";
+      const target = parseMarkdownLink(href);
+
+      if (!target) {
+        return;
       }
+
+      event.preventDefault();
+
+      const fromIndex = findLoreDocumentBySlug(target.slug);
+      const resolvedType = fromIndex?.type || target.type;
+
+      if (!resolvedType) {
+        loreContent.innerHTML = `<p>No se pudo resolver el enlace: ${href}</p>`;
+        return;
+      }
+
+      await loadLoreDocument(resolvedType, target.slug, fromIndex?.title || target.slug);
     });
   }
 
