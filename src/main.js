@@ -21,12 +21,6 @@ const rulesMenuLink = document.getElementById("rules-menu-link");
 const lexiconMenuLink = document.getElementById("lexicon-menu-link");
 const openAnalyzerBtn = document.getElementById("open-analyzer");
 
-const analyzeForm = document.getElementById("analyze-form");
-const languageInput = document.getElementById("language");
-const wordInput = document.getElementById("word");
-const wordImage = document.getElementById("word-image");
-const analysisOutput = document.getElementById("analysis-output");
-
 let loreViewController;
 
 function setView(view, sidebarMenu = null) {
@@ -138,7 +132,7 @@ function initNavigation() {
   });
 }
 
-function bootstrap() {
+async function bootstrap() {
   loreViewController = createLoreViewController({
     raceList,
     languageList,
@@ -147,18 +141,11 @@ function bootstrap() {
     loreContent,
   });
 
-  const lexiconViewController = createLexiconViewController({
-    analyzeForm,
-    languageInput,
-    wordInput,
-    wordImage,
-    analysisOutput,
-  });
-
   initNavigation();
   loreViewController.interceptMarkdownLinks();
-  loreViewController.loadLoreIndex();
-  lexiconViewController.init();
+  const index = await loreViewController.loadLoreIndex();
+  const languages = index?.languages || [];
+  createLexiconViewController(lexiconView, languages);
   setView("home");
   loreViewController.loadHomeIntro();
 }

@@ -68,63 +68,14 @@
 
         <main class="content">
           <section id="home-view" class="view">
-            <div class="content-header">
-              <h2>Inicio</h2>
-              <p>Presentacion general del mundo de Koten.</p>
-            </div>
             <article id="home-content" class="lore-content panel"></article>
           </section>
 
           <section id="lore-view" class="view hidden">
-            <div class="content-header">
-              <h2>Lore</h2>
-              <p>Selecciona una raza o idioma en el menu.</p>
-            </div>
             <article id="lore-content" class="lore-content panel"></article>
           </section>
 
-          <section id="lexicon-view" class="view hidden">
-            <div class="content-header">
-              <h2>Lexicon</h2>
-              <p>Renderiza una palabra y revisa sus raices.</p>
-            </div>
-
-            <form id="analyze-form" class="tool-form">
-              <label>
-                Idioma
-                <select id="language" required>
-                  <option value="lapag">Lapag</option>
-                  <option value="goxjix">Gox'jix</option>
-                  <option value="dekayun">Dekayun</option>
-                  <option value="negelch">Negelch</option>
-                  <option value="idoling">Idoling</option>
-                  <option value="jobide">Jobid'e</option>
-                  <option value="gornach_kagsha">Gornach-Kagsha</option>
-                </select>
-              </label>
-
-              <label>
-                Palabra
-                <input id="word" type="text" placeholder="kamama" minlength="1" required />
-              </label>
-
-              <button class="btn" type="submit">Analizar</button>
-            </form>
-
-            <section class="results">
-              <div class="panel">
-                <h3>Render</h3>
-                <img id="word-image" alt="Render de palabra" />
-              </div>
-
-              <div class="panel">
-                <h3>Analisis</h3>
-                <div id="analysis-output" class="analysis-output empty">
-                  Ejecuta un analisis para ver resultados.
-                </div>
-              </div>
-            </section>
-          </section>
+          <section id="lexicon-view" class="view hidden"></section>
         </main>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { getLoreDocument, getLoreIndex, normalizeLoreHtml } from "../service.js";
+import { fetchText, getLoreDocument, getLoreIndex, normalizeLoreHtml } from "../service.js";
 
 export function createLoreViewController({
   raceList,
@@ -19,14 +19,6 @@ export function createLoreViewController({
     return li;
   }
 
-  function getLoreTypeForCategory(category) {
-    if (category === "languages") {
-      return "lang";
-    }
-
-    return "races";
-  }
-
   async function loadLoreIndex() {
     try {
       const index = await getLoreIndex();
@@ -36,16 +28,23 @@ export function createLoreViewController({
       ruleList.innerHTML = "";
 
       index.races.forEach((item) => {
-        raceList.appendChild(createLoreMenuItem(item, getLoreTypeForCategory("races")));
+        raceList.appendChild(createLoreMenuItem(item, "races"));
       });
 
       index.languages.forEach((item) => {
-        languageList.appendChild(createLoreMenuItem(item, getLoreTypeForCategory("languages")));
+        languageList.appendChild(createLoreMenuItem(item, "lang"));
       });
+
+      (index.sections?.rules || []).forEach((item) => {
+        ruleList.appendChild(createLoreMenuItem(item, "rules"));
+      });
+
+      return index;
     } catch (error) {
       raceList.innerHTML = `<li>${error.message}</li>`;
       languageList.innerHTML = `<li>${error.message}</li>`;
       loreContent.innerHTML = `<p>${error.message}</p>`;
+      return null;
     }
   }
 
@@ -53,7 +52,7 @@ export function createLoreViewController({
     homeContent.innerHTML = "<p>Cargando documento...</p>";
 
     try {
-      const html = await getLoreDocument("lore", "koten");
+      const html = await fetchText("/lore/koten");
       homeContent.innerHTML = normalizeLoreHtml(html);
       attachWordTooltips(homeContent);
       document.title = "Koten | Inicio";

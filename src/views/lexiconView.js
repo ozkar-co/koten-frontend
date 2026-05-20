@@ -42,25 +42,83 @@ function renderAnalysisCard(data, rootDetailsMap) {
   `;
 }
 
-export function createLexiconViewController({ analyzeForm, languageInput, wordInput, wordImage, analysisOutput }) {
+export function createLexiconViewController(container, languages) {
+  // Build DOM
+  const select = document.createElement("select");
+  select.id = "language";
+  select.required = true;
+  languages.forEach(({ slug, title }) => {
+    const opt = document.createElement("option");
+    opt.value = slug;
+    opt.textContent = title;
+    select.appendChild(opt);
+  });
+
+  const wordInput = document.createElement("input");
+  wordInput.type = "text";
+  wordInput.id = "word";
+  wordInput.placeholder = "kamama";
+  wordInput.minLength = 1;
+  wordInput.required = true;
+
+  const submitBtn = document.createElement("button");
+  submitBtn.className = "btn";
+  submitBtn.type = "submit";
+  submitBtn.textContent = "Analizar";
+
+  const form = document.createElement("form");
+  form.id = "analyze-form";
+  form.className = "tool-form";
+
+  const langLabel = document.createElement("label");
+  langLabel.textContent = "Idioma";
+  langLabel.appendChild(select);
+
+  const wordLabel = document.createElement("label");
+  wordLabel.textContent = "Palabra";
+  wordLabel.appendChild(wordInput);
+
+  form.append(langLabel, wordLabel, submitBtn);
+
+  const wordImage = document.createElement("img");
+  wordImage.id = "word-image";
+  wordImage.alt = "Render de palabra";
+
+  const analysisOutput = document.createElement("div");
+  analysisOutput.id = "analysis-output";
+  analysisOutput.className = "analysis-output empty";
+  analysisOutput.textContent = "Ejecuta un analisis para ver resultados.";
+
+  const renderBox = document.createElement("div");
+  renderBox.className = "panel";
+  renderBox.innerHTML = "<h3>Render</h3>";
+  renderBox.appendChild(wordImage);
+
+  const analysisBox = document.createElement("div");
+  analysisBox.className = "panel";
+  analysisBox.innerHTML = "<h3>Analisis</h3>";
+  analysisBox.appendChild(analysisOutput);
+
+  const results = document.createElement("section");
+  results.className = "results";
+  results.append(renderBox, analysisBox);
+
+  container.append(form, results);
+
+  // Logic
   async function analyzeWord(event) {
     event.preventDefault();
-
-    const language = languageInput.value;
+    const language = select.value;
     const word = wordInput.value.trim();
-
-    if (!word) {
-      return;
-    }
+    if (!word) return;
 
     analysisOutput.classList.remove("empty");
-    analysisOutput.innerHTML = "Analizando...";
+    analysisOutput.textContent = "Analizando...";
     wordImage.src = getWordImageUrl(language, word);
     wordImage.title = word;
 
     try {
       const analysis = await analyzeLexiconWord(language, word);
-
       const uniqueRoots = [
         ...new Set(
           (analysis.roots || []).flatMap((r) =>
@@ -68,28 +126,19 @@ export function createLexiconViewController({ analyzeForm, languageInput, wordIn
           )
         ),
       ];
-
       const rootResponses = await Promise.all(
         uniqueRoots.map(async (root) => {
-          try {
-            const detail = await getRootDetail(root);
-            return [root, detail];
-          } catch {
-            return [root, null];
-          }
+          try { return [root, await getRootDetail(root)]; }
+          catch { return [root, null]; }
         })
       );
-
-      const rootDetailsMap = new Map(rootResponses);
-      analysisOutput.innerHTML = renderAnalysisCard(analysis, rootDetailsMap);
+      analysisOutput.innerHTML = renderAnalysisCard(analysis, new Map(rootResponses));
     } catch (error) {
-      analysisOutput.innerHTML = `No se pudo analizar: ${error.message}`;
+      analysisOutput.textContent = `No se pudo analizar: ${error.message}`;
     }
   }
 
-  function init() {
-    analyzeForm.addEventListener("submit", analyzeWord);
-  }
+  form.addEventListener("submit", analyzeWord);
 
-  return { init };
+  return {};
 }
