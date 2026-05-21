@@ -19,42 +19,13 @@
           <h1>Koten</h1>
           <p class="subtitle">El Lugar donde nace la vida</p>
         </div>
-        <nav class="site-nav" aria-label="Menu principal">
-          <button class="btn btn-pill site-nav-btn btn-active" data-target="home">Inicio</button>
-          <button class="btn btn-pill site-nav-btn" data-target="races">Razas</button>
-          <button class="btn btn-pill site-nav-btn" data-target="languages">Idiomas</button>
-          <button class="btn btn-pill site-nav-btn" data-target="rules">Reglas</button>
-          <button class="btn btn-pill site-nav-btn" data-target="lexicon">Lexicon</button>
+        <nav id="site-nav" class="site-nav" aria-label="Menu principal">
           <a class="btn btn-pill" href="/admin/login">Login</a>
         </nav>
       </header>
 
       <div id="main-layout" class="layout">
-        <aside id="sidebar" class="sidebar hidden">
-          <section id="races-menu" class="menu-section hidden">
-            <h3><button id="races-menu-link" class="btn-ghost">Razas</button></h3>
-            <ul id="race-list"></ul>
-          </section>
-
-          <section id="languages-menu" class="menu-section hidden">
-            <h3><button id="languages-menu-link" class="btn-ghost">Idiomas</button></h3>
-            <ul id="language-list"></ul>
-          </section>
-
-          <section id="rules-menu" class="menu-section hidden">
-            <h3><button id="rules-menu-link" class="btn-ghost">Reglas</button></h3>
-            <ul id="rule-list"></ul>
-          </section>
-
-          <section id="lexicon-menu" class="menu-section hidden">
-            <h3><button id="lexicon-menu-link" class="btn-ghost">Lexicon</button></h3>
-            <ul>
-              <li><button id="open-analyzer" class="btn-ghost">Analisis</button></li>
-              <li><button class="btn-ghost btn-muted" disabled>Buscador</button></li>
-              <li><button class="btn-ghost btn-muted" disabled>Traductor</button></li>
-            </ul>
-          </section>
-        </aside>
+        <aside id="sidebar" class="sidebar hidden"></aside>
 
         <main class="content">
           <section id="lore-view">

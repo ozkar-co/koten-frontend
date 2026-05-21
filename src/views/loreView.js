@@ -1,13 +1,39 @@
 import { fetchText, getLoreDocument, getLoreIndex, normalizeLoreHtml } from "../service.js";
 
 export function createLoreViewController({
-  raceList,
-  languageList,
-  ruleList,
+  sidebar,
   loreContent,
 }) {
   let loreIndexCache = null;
   let currentLoreType = null;
+  let sectionMeta = [];
+  let sectionMenus = new Map();
+
+  function asDocumentList(value) {
+    return Array.isArray(value) ? value.filter((item) => item?.slug) : [];
+  }
+
+  function humanizeSectionName(sectionKey) {
+    return sectionKey
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
+  function normalizeSections(index) {
+    const sections = index?.sections || {};
+    return Object.entries(sections)
+      .map(([key, value]) => {
+        const documents = asDocumentList(value);
+        const root = documents.find((item) => item.slug === key) || documents[0] || null;
+        return {
+          key,
+          title: root?.title || humanizeSectionName(key),
+          rootSlug: root?.slug || key,
+          documents,
+        };
+      })
+      .filter((section) => section.documents.length > 0);
+  }
 
   function createLoreMenuItem({ slug, title }, type) {
     const li = document.createElement("li");
@@ -21,34 +47,73 @@ export function createLoreViewController({
     return li;
   }
 
+  function renderSidebar() {
+    sidebar.innerHTML = "";
+    sectionMenus = new Map();
+
+    sectionMeta.forEach((section) => {
+      const sectionNode = document.createElement("section");
+      sectionNode.id = `${section.key}-menu`;
+      sectionNode.className = "menu-section hidden";
+
+      const heading = document.createElement("h3");
+      const headingButton = document.createElement("button");
+      headingButton.className = "btn-ghost";
+      headingButton.textContent = section.title;
+      headingButton.addEventListener("click", () => {
+        loadLoreDocument(section.key, section.rootSlug, section.title);
+      });
+      heading.appendChild(headingButton);
+
+      const list = document.createElement("ul");
+      section.documents
+        .filter((item) => item.slug !== section.rootSlug)
+        .forEach((item) => {
+          list.appendChild(createLoreMenuItem(item, section.key));
+        });
+
+      sectionNode.append(heading, list);
+      sidebar.appendChild(sectionNode);
+      sectionMenus.set(section.key, sectionNode);
+    });
+  }
+
   async function loadLoreIndex() {
     try {
       const index = await getLoreIndex();
       loreIndexCache = index;
+      sectionMeta = normalizeSections(index);
+      renderSidebar();
 
-      raceList.innerHTML = "";
-      languageList.innerHTML = "";
-      ruleList.innerHTML = "";
-
-      index.races.filter((item) => item.slug !== "races").forEach((item) => {
-        raceList.appendChild(createLoreMenuItem(item, "races"));
-      });
-
-      index.languages.filter((item) => item.slug !== "lang").forEach((item) => {
-        languageList.appendChild(createLoreMenuItem(item, "lang"));
-      });
-
-      (index.sections?.rules || []).filter((item) => item.slug !== "rules").forEach((item) => {
-        ruleList.appendChild(createLoreMenuItem(item, "rules"));
-      });
-
-      return index;
+      return {
+        index,
+        sections: sectionMeta.map((section) => ({
+          key: section.key,
+          title: section.title,
+          rootSlug: section.rootSlug,
+        })),
+      };
     } catch (error) {
-      raceList.innerHTML = `<li>${error.message}</li>`;
-      languageList.innerHTML = `<li>${error.message}</li>`;
+      sidebar.innerHTML = `<p>${error.message}</p>`;
       loreContent.innerHTML = `<p>${error.message}</p>`;
-      return null;
+      return { index: null, sections: [] };
     }
+  }
+
+  function showSectionMenu(sectionKey) {
+    let exists = false;
+    sectionMenus.forEach((menu, key) => {
+      const isCurrent = key === sectionKey;
+      menu.classList.toggle("hidden", !isCurrent);
+      exists = exists || isCurrent;
+    });
+    return exists;
+  }
+
+  async function loadSectionRoot(sectionKey) {
+    const section = sectionMeta.find((item) => item.key === sectionKey);
+    if (!section) return;
+    await loadLoreDocument(section.key, section.rootSlug, section.title);
   }
 
   function attachImageModal(container) {
@@ -109,19 +174,29 @@ export function createLoreViewController({
   function findLoreDocumentBySlug(slug) {
     if (!loreIndexCache) return null;
 
-    const races = loreIndexCache.races || [];
-    const languages = loreIndexCache.languages || [];
-    const rules = loreIndexCache.sections?.rules || [];
+    for (const section of sectionMeta) {
+      const match = section.documents.find((item) => item.slug === slug);
+      if (match) {
+        return { type: section.key, title: match.title || slug, slug };
+      }
+    }
 
-    const raceMatch = races.find((item) => item.slug === slug);
-    if (raceMatch) return { type: "races", title: raceMatch.title || slug, slug };
+    return null;
+  }
 
-    const languageMatch = languages.find((item) => item.slug === slug);
-    if (languageMatch) return { type: "lang", title: languageMatch.title || slug, slug };
+  function findLoreDocumentByTypeAndSlug(type, slug) {
+    if (!type) return null;
+    const section = sectionMeta.find((item) => item.key === type);
+    if (!section) return null;
+    const match = section.documents.find((item) => item.slug === slug);
+    if (!match) return null;
+    return { type: section.key, title: match.title || slug, slug };
+  }
 
-    const ruleMatch = rules.find((item) => item.slug === slug);
-    if (ruleMatch) return { type: "rules", title: ruleMatch.title || slug, slug };
-
+  function mapSectionAlias(type) {
+    if (!type) return null;
+    if (sectionMeta.some((section) => section.key === type)) return type;
+    if (type === "languages" && sectionMeta.some((section) => section.key === "lang")) return "lang";
     return null;
   }
 
@@ -134,10 +209,8 @@ export function createLoreViewController({
     const slug = file.replace(/\.md$/i, "");
     if (!slug) return null;
 
-    const explicitType = parts.length > 1 ? parts[0] : null;
-    if (explicitType === "races") return { type: "races", slug };
-    if (explicitType === "lang" || explicitType === "languages") return { type: "lang", slug };
-    if (explicitType === "rules") return { type: "rules", slug };
+    const explicitType = parts.length > 1 ? mapSectionAlias(parts[0]) : null;
+    if (explicitType) return { type: explicitType, slug };
 
     return { type: currentLoreType, slug };
   }
@@ -159,7 +232,8 @@ export function createLoreViewController({
 
       event.preventDefault();
 
-      const fromIndex = findLoreDocumentBySlug(target.slug);
+      const scopedMatch = findLoreDocumentByTypeAndSlug(target.type, target.slug);
+      const fromIndex = scopedMatch || findLoreDocumentBySlug(target.slug);
       const resolvedType = fromIndex?.type || target.type;
 
       if (!resolvedType) {
@@ -175,6 +249,13 @@ export function createLoreViewController({
     loadLoreIndex,
     loadHomeIntro,
     loadLoreDocument,
+    loadSectionRoot,
+    showSectionMenu,
+    getSections: () => sectionMeta.map((section) => ({
+      key: section.key,
+      title: section.title,
+      rootSlug: section.rootSlug,
+    })),
     interceptMarkdownLinks,
   };
 }
