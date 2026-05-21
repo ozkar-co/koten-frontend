@@ -43,3 +43,4 @@ PORT=3006 HOST=0.0.0.0 ./run.sh
 - **No hardcodear listas**: todo viene del backend.
 - **El HTML es solo estructura**: la logica vive en JS.
 - **No parchear layouts con hacks CSS**: si el layout falla, simplificar la estructura.
+- **Fail Fast**: si algo no cumple contrato, la app falla explícitamente en vez de ocultarlo

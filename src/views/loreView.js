@@ -9,30 +9,45 @@ export function createLoreViewController({
   let sectionMeta = [];
   let sectionMenus = new Map();
 
-  function asDocumentList(value) {
-    return Array.isArray(value) ? value.filter((item) => item?.slug) : [];
-  }
-
-  function humanizeSectionName(sectionKey) {
-    return sectionKey
-      .replace(/[-_]+/g, " ")
-      .replace(/\b\w/g, (char) => char.toUpperCase());
-  }
-
   function normalizeSections(index) {
-    const sections = index?.sections || {};
-    return Object.entries(sections)
-      .map(([key, value]) => {
-        const documents = asDocumentList(value);
-        const root = documents.find((item) => item.slug === key) || documents[0] || null;
-        return {
-          key,
-          title: root?.title || humanizeSectionName(key),
-          rootSlug: root?.slug || key,
-          documents,
-        };
-      })
-      .filter((section) => section.documents.length > 0);
+    const sections = index?.sections;
+
+    if (!sections || typeof sections !== "object") {
+      throw new Error("Contrato invalido: lore/index.sections es obligatorio");
+    }
+
+    const normalized = Object.entries(sections).map(([key, value]) => {
+      if (!Array.isArray(value) || value.length === 0) {
+        throw new Error(`Contrato invalido: sections.${key} debe ser una lista no vacia`);
+      }
+
+      const documents = value.filter((item) => item && typeof item.slug === "string");
+      if (documents.length !== value.length) {
+        throw new Error(`Contrato invalido: sections.${key} contiene documentos sin slug`);
+      }
+
+      const root = documents.find((item) => item.slug === key);
+      if (!root) {
+        throw new Error(`Contrato invalido: falta documento raiz ${key}.md en sections.${key}`);
+      }
+
+      if (!root.title || typeof root.title !== "string") {
+        throw new Error(`Contrato invalido: falta title para sections.${key} (documento raiz)`);
+      }
+
+      return {
+        key,
+        title: root.title,
+        rootSlug: root.slug,
+        documents,
+      };
+    });
+
+    if (!normalized.length) {
+      throw new Error("Contrato invalido: sections no contiene secciones");
+    }
+
+    return normalized;
   }
 
   function createLoreMenuItem({ slug, title }, type) {
@@ -96,7 +111,7 @@ export function createLoreViewController({
     } catch (error) {
       sidebar.innerHTML = `<p>${error.message}</p>`;
       loreContent.innerHTML = `<p>${error.message}</p>`;
-      return { index: null, sections: [] };
+      throw error;
     }
   }
 
@@ -196,7 +211,6 @@ export function createLoreViewController({
   function mapSectionAlias(type) {
     if (!type) return null;
     if (sectionMeta.some((section) => section.key === type)) return type;
-    if (type === "languages" && sectionMeta.some((section) => section.key === "lang")) return "lang";
     return null;
   }
 

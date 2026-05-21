@@ -79,7 +79,7 @@ async function bootstrap() {
   initNavigation();
   loreViewController.interceptMarkdownLinks();
   const loreIndex = await loreViewController.loadLoreIndex();
-  renderTopNavigation(loreIndex.sections || loreViewController.getSections());
+  renderTopNavigation(loreIndex.sections);
   const lexiconLanguages = await getLexiconLanguages();
   createLexiconViewController(lexiconView, lexiconLanguages);
   await navigate("home");
