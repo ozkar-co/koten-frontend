@@ -4,10 +4,30 @@ export function createLoreViewController({
   sidebar,
   loreContent,
 }) {
-  let loreIndexCache = null;
   let currentLoreType = null;
   let sectionMeta = [];
   let sectionMenus = new Map();
+  let homeDocument = null;
+
+  function validateHomeDocument(index) {
+    if (!Array.isArray(index?.documents) || index.documents.length === 0) {
+      throw new Error("Contrato invalido: lore/index.documents debe ser una lista no vacia");
+    }
+
+    const [first] = index.documents;
+    if (!first || typeof first.slug !== "string" || !first.slug) {
+      throw new Error("Contrato invalido: documents[0].slug es obligatorio");
+    }
+
+    if (typeof first.title !== "string" || !first.title) {
+      throw new Error("Contrato invalido: documents[0].title es obligatorio");
+    }
+
+    return {
+      slug: first.slug,
+      title: first.title,
+    };
+  }
 
   function normalizeSections(index) {
     const sections = index?.sections;
@@ -24,6 +44,12 @@ export function createLoreViewController({
       const documents = value.filter((item) => item && typeof item.slug === "string");
       if (documents.length !== value.length) {
         throw new Error(`Contrato invalido: sections.${key} contiene documentos sin slug`);
+      }
+
+      for (const item of documents) {
+        if (typeof item.title !== "string" || !item.title) {
+          throw new Error(`Contrato invalido: sections.${key} contiene documentos sin title`);
+        }
       }
 
       const root = documents.find((item) => item.slug === key);
@@ -96,12 +122,13 @@ export function createLoreViewController({
   async function loadLoreIndex() {
     try {
       const index = await getLoreIndex();
-      loreIndexCache = index;
       sectionMeta = normalizeSections(index);
+      homeDocument = validateHomeDocument(index);
       renderSidebar();
 
       return {
         index,
+        home: homeDocument,
         sections: sectionMeta.map((section) => ({
           key: section.key,
           title: section.title,
@@ -127,23 +154,10 @@ export function createLoreViewController({
 
   async function loadSectionRoot(sectionKey) {
     const section = sectionMeta.find((item) => item.key === sectionKey);
-    if (!section) return;
+    if (!section) {
+      throw new Error(`Contrato invalido: seccion no registrada ${sectionKey}`);
+    }
     await loadLoreDocument(section.key, section.rootSlug, section.title);
-  }
-
-  function attachImageModal(container) {
-    container.querySelectorAll("img.lore-image").forEach((img) => {
-      img.addEventListener("click", () => {
-        const modal = document.createElement("div");
-        modal.className = "img-modal";
-        const full = document.createElement("img");
-        full.src = img.src.replace(/_thumb(?=([?#]|$))/, "");
-        full.alt = img.alt;
-        modal.appendChild(full);
-        modal.addEventListener("click", () => modal.remove());
-        document.body.appendChild(modal);
-      });
-    });
   }
 
   async function loadHomeIntro() {
@@ -151,25 +165,16 @@ export function createLoreViewController({
     loreContent.innerHTML = "<p>Cargando documento...</p>";
 
     try {
-      const html = await fetchText("/lore/koten");
+      if (!homeDocument) {
+        throw new Error("Contrato invalido: documento home no cargado");
+      }
+
+      const html = await fetchText(`/lore/${homeDocument.slug}`);
       loreContent.innerHTML = normalizeLoreHtml(html);
-      attachWordTooltips(loreContent);
-      attachImageModal(loreContent);
-      document.title = "Koten | Inicio";
+      document.title = `Koten | ${homeDocument.title}`;
     } catch (error) {
       loreContent.innerHTML = `<p>${error.message}</p>`;
     }
-  }
-
-  function attachWordTooltips(container) {
-    container.querySelectorAll(".koten-word img").forEach((img) => {
-      const match = img.src.match(/\/word\/[^/]+\/([^/?#]+)/);
-      if (match) {
-        const word = decodeURIComponent(match[1]);
-        img.title = word;
-        img.parentElement.title = word;
-      }
-    });
   }
 
   async function loadLoreDocument(type, slug, title) {
@@ -178,25 +183,10 @@ export function createLoreViewController({
       loreContent.innerHTML = "<p>Cargando documento...</p>";
       const html = await getLoreDocument(type, slug);
       loreContent.innerHTML = normalizeLoreHtml(html);
-      attachWordTooltips(loreContent);
-      attachImageModal(loreContent);
       document.title = `Koten | ${title}`;
     } catch (error) {
       loreContent.innerHTML = `<p>${error.message}</p>`;
     }
-  }
-
-  function findLoreDocumentBySlug(slug) {
-    if (!loreIndexCache) return null;
-
-    for (const section of sectionMeta) {
-      const match = section.documents.find((item) => item.slug === slug);
-      if (match) {
-        return { type: section.key, title: match.title || slug, slug };
-      }
-    }
-
-    return null;
   }
 
   function findLoreDocumentByTypeAndSlug(type, slug) {
@@ -205,13 +195,7 @@ export function createLoreViewController({
     if (!section) return null;
     const match = section.documents.find((item) => item.slug === slug);
     if (!match) return null;
-    return { type: section.key, title: match.title || slug, slug };
-  }
-
-  function mapSectionAlias(type) {
-    if (!type) return null;
-    if (sectionMeta.some((section) => section.key === type)) return type;
-    return null;
+    return { type: section.key, title: match.title, slug };
   }
 
   function parseMarkdownLink(href) {
@@ -223,8 +207,13 @@ export function createLoreViewController({
     const slug = file.replace(/\.md$/i, "");
     if (!slug) return null;
 
-    const explicitType = parts.length > 1 ? mapSectionAlias(parts[0]) : null;
-    if (explicitType) return { type: explicitType, slug };
+    if (parts.length > 1) {
+      return { type: parts[0], slug };
+    }
+
+    if (!currentLoreType) {
+      return null;
+    }
 
     return { type: currentLoreType, slug };
   }
@@ -246,16 +235,13 @@ export function createLoreViewController({
 
       event.preventDefault();
 
-      const scopedMatch = findLoreDocumentByTypeAndSlug(target.type, target.slug);
-      const fromIndex = scopedMatch || findLoreDocumentBySlug(target.slug);
-      const resolvedType = fromIndex?.type || target.type;
-
-      if (!resolvedType) {
+      const fromIndex = findLoreDocumentByTypeAndSlug(target.type, target.slug);
+      if (!fromIndex) {
         loreContent.innerHTML = `<p>No se pudo resolver el enlace: ${href}</p>`;
         return;
       }
 
-      await loadLoreDocument(resolvedType, target.slug, fromIndex?.title || target.slug);
+      await loadLoreDocument(fromIndex.type, target.slug, fromIndex.title);
     });
   }
 
@@ -265,11 +251,6 @@ export function createLoreViewController({
     loadLoreDocument,
     loadSectionRoot,
     showSectionMenu,
-    getSections: () => sectionMeta.map((section) => ({
-      key: section.key,
-      title: section.title,
-      rootSlug: section.rootSlug,
-    })),
     interceptMarkdownLinks,
   };
 }

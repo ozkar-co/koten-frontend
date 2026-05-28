@@ -10,6 +10,49 @@ const lexiconView  = document.getElementById("lexicon-view");
 
 let loreViewController;
 let sectionTargets = [];
+let homeDocument = null;
+
+function getImageName(src) {
+  try {
+    const url = new URL(src, window.location.href);
+    const pathParts = url.pathname.split("/").filter(Boolean);
+    return decodeURIComponent(pathParts[pathParts.length - 1] || "imagen");
+  } catch {
+    return "imagen";
+  }
+}
+
+function openImageModal(src, alt = "") {
+  const modal = document.createElement("div");
+  modal.className = "image-modal";
+
+  const content = document.createElement("div");
+  content.className = "image-modal-content";
+
+  const fullImage = document.createElement("img");
+  fullImage.src = src;
+  fullImage.alt = alt;
+
+  const caption = document.createElement("p");
+  caption.className = "image-modal-caption";
+  caption.textContent = getImageName(src);
+
+  content.append(fullImage, caption);
+  modal.appendChild(content);
+
+  modal.addEventListener("click", () => modal.remove());
+  content.addEventListener("click", (event) => event.stopPropagation());
+
+  document.body.appendChild(modal);
+}
+
+function initGlobalImageModal() {
+  document.addEventListener("click", (event) => {
+    const image = event.target.closest("img");
+    if (!image || image.closest(".image-modal")) return;
+    openImageModal(image.currentSrc || image.src, image.alt || "");
+  });
+}
 
 function createTopNavButton(target, label, isActive = false) {
   const button = document.createElement("button");
@@ -26,7 +69,7 @@ function renderTopNavigation(sections) {
 
   const loginLink = siteNav.querySelector('a[href="/admin/login"]');
   const nodes = [
-    createTopNavButton("home", "Inicio", true),
+    createTopNavButton("home", homeDocument.title, true),
     ...sections.map((section) => createTopNavButton(section.key, section.title)),
     createTopNavButton("lexicon", "Lexicon"),
   ];
@@ -77,8 +120,10 @@ function initNavigation() {
 async function bootstrap() {
   loreViewController = createLoreViewController({ sidebar, loreContent });
   initNavigation();
+  initGlobalImageModal();
   loreViewController.interceptMarkdownLinks();
   const loreIndex = await loreViewController.loadLoreIndex();
+  homeDocument = loreIndex.home;
   renderTopNavigation(loreIndex.sections);
   const lexiconLanguages = await getLexiconLanguages();
   createLexiconViewController(lexiconView, lexiconLanguages);
