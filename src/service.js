@@ -2,9 +2,7 @@ export const API_BASE = "https://koten-api.ozkr.net";
 
 export function normalizeLoreHtml(html) {
   return html
-    .replaceAll('src="/word/', `src="${API_BASE}/word/`)
-    .replaceAll('href="/word/', `href="${API_BASE}/word/`)
-    .replace(/src="\/image\/([^"]+)\.[^".]+"/g, `src="${API_BASE}/image/$1_thumb"`);
+    .replace(/src="\/image\/([^"]+)\.[^".]+"/g, 'src="/image/$1_thumb"');
 }
 
 export async function fetchJson(path, options = {}) {
@@ -37,7 +35,7 @@ export async function fetchText(path) {
 }
 
 export function getWordImageUrl(language, word) {
-  return `${API_BASE}/word/${encodeURIComponent(language)}/${encodeURIComponent(word)}`;
+  return `/word/${encodeURIComponent(language)}/${encodeURIComponent(word)}`;
 }
 
 export async function getLoreIndex() {

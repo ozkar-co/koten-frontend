@@ -34,6 +34,11 @@ body {
     var(--bg);
 }
 
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
 ul { margin: 0; padding-left: 1rem; }
 li { margin-bottom: 0.3rem; }
 
@@ -190,7 +195,7 @@ li { margin-bottom: 0.3rem; }
 
 .image-modal-caption {
   color: var(--text);
-  font-size: 2 rem;
+  font-size: 0.9rem;
   text-align: center;
   word-break: break-word;
 }
