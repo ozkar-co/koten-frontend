@@ -112,6 +112,8 @@ li { margin-bottom: 0.3rem; }
   gap: 1.25rem;
 }
 
+.sidebar.hidden { display: none; }
+
 .menu-section { margin: 0; }
 
 .menu-section h2,
