@@ -22,7 +22,18 @@ function getImageName(src) {
   }
 }
 
+function resolveFullImageSrc(src) {
+  try {
+    const url = new URL(src, window.location.href);
+    url.pathname = url.pathname.replace(/_thumb(?=\.[^/.]+$|$)/, "");
+    return url.toString();
+  } catch {
+    return src.replace(/_thumb(?=\.[^/.]+$|$)/, "");
+  }
+}
+
 function openImageModal(src, alt = "") {
+  const fullSrc = resolveFullImageSrc(src);
   const modal = document.createElement("div");
   modal.className = "image-modal";
 
@@ -30,12 +41,12 @@ function openImageModal(src, alt = "") {
   content.className = "image-modal-content";
 
   const fullImage = document.createElement("img");
-  fullImage.src = src;
+  fullImage.src = fullSrc;
   fullImage.alt = alt;
 
   const caption = document.createElement("p");
   caption.className = "image-modal-caption";
-  caption.textContent = getImageName(src);
+  caption.textContent = getImageName(fullSrc);
 
   content.append(fullImage, caption);
   modal.appendChild(content);
