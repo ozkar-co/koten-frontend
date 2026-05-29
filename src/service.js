@@ -34,8 +34,9 @@ export async function fetchText(path) {
   return response.text();
 }
 
-export function getWordImageUrl(language, word) {
-  return `/word/${encodeURIComponent(language)}/${encodeURIComponent(word)}`;
+export function getWordImageUrl(language, word, { small = false } = {}) {
+  const base = `${API_BASE}/word/${encodeURIComponent(language)}/${encodeURIComponent(word)}`;
+  return small ? `${base}?small=true` : base;
 }
 
 export async function getLoreIndex() {
