@@ -37,6 +37,20 @@ body {
 h1 {
   font-size: 2em;
   margin: 0.67em 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  text-align: center;
+}
+
+h1::before,
+h1::after {
+  content: "";
+  flex: 1 1 120px;
+  max-width: 240px;
+  height: 1px;
+  background: var(--line);
 }
 
 ul { margin: 0; padding-left: 1rem; }
@@ -93,6 +107,16 @@ li { margin-bottom: 0.3rem; }
 }
 
 .topbar h1      { margin: 0; font-size: 1.4rem; }
+.topbar h1 {
+  display: block;
+  text-align: left;
+}
+
+.topbar h1::before,
+.topbar h1::after {
+  content: none;
+}
+
 .topbar .subtitle { margin: 0.1rem 0 0; color: var(--muted); font-size: 0.9rem; }
 
 .site-nav {
@@ -138,6 +162,20 @@ li { margin-bottom: 0.3rem; }
 
 .lore-content { line-height: 1.5; }
 .lore-content img { max-width: 100%; }
+img {
+  display: block;
+  margin-inline: auto;
+}
+
+.koten-word img,
+#word-image {
+  margin-inline: 0;
+}
+
+.koten-word img {
+  display: inline-block;
+}
+
 .lore-content a {
   color: var(--accent-2);
   text-decoration-thickness: 1px;
