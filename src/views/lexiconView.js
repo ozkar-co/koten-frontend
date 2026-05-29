@@ -91,20 +91,6 @@ export function createLexiconViewController(container, languages) {
   wordImage.style.cursor = "pointer";
   wordImage.title = "Ver en tamaño completo";
 
-  const modal = document.createElement("dialog");
-  modal.className = "word-image-modal";
-  const modalImg = document.createElement("img");
-  modalImg.alt = "Render de palabra (tamaño completo)";
-  modal.appendChild(modalImg);
-  modal.addEventListener("click", () => modal.close());
-  document.body.appendChild(modal);
-
-  wordImage.addEventListener("click", () => {
-    if (!wordImage.src) return;
-    modalImg.src = wordImage.dataset.fullUrl || "";
-    modal.showModal();
-  });
-
   const analysisOutput = document.createElement("div");
   analysisOutput.id = "analysis-output";
   analysisOutput.className = "analysis-output empty";
@@ -135,8 +121,7 @@ export function createLexiconViewController(container, languages) {
 
     analysisOutput.classList.remove("empty");
     analysisOutput.textContent = "Analizando...";
-    wordImage.src = getWordImageUrl(language, word, { small: true });
-    wordImage.dataset.fullUrl = getWordImageUrl(language, word);
+    wordImage.src = getWordImageUrl(language, word);
 
     try {
       const analysis = await analyzeLexiconWord(language, word);

@@ -26,9 +26,13 @@ function resolveFullImageSrc(src) {
   try {
     const url = new URL(src, window.location.href);
     url.pathname = url.pathname.replace(/_thumb(?=\.[^/.]+$|$)/, "");
+    url.searchParams.delete("small");
     return url.toString();
   } catch {
-    return src.replace(/_thumb(?=\.[^/.]+$|$)/, "");
+    return src
+      .replace(/_thumb(?=\.[^/.]+$|$)/, "")
+      .replace(/[?&]small(?:=[^&]*)?(?=&|$)/, "")
+      .replace(/[?&]$/, "");
   }
 }
 
